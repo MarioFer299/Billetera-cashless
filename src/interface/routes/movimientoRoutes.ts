@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { MovimientoController } from '../controllers/MovimientoController';
+import { MovimientoController } from '../controllers/MovimientoController.js';
 
 const router = Router();
 const ctrl = new MovimientoController();

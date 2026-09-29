@@ -1,5 +1,5 @@
 import { prisma } from '../db/prismaClient';
-import { IMovimientoRepository, Movimiento, PaginationResult } from '../../domain/repositories/IMovimientoRepository';
+import { IMovimientoRepository, Movimiento, PaginationResult } from '../../domain/repositories/IMovimientoRepository.js';
 
 export class PrismaMovimientoRepository implements IMovimientoRepository {
   async findAll(page: number, limit: number): Promise<{ data: Movimiento[]; pagination: PaginationResult }> {

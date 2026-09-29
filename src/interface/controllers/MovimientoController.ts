@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { ListarMovimientosUseCase } from '../../application/usecases/ListarMovimientosUseCase';
-import { CrearMovimientoUseCase } from '../../application/usecases/CrearMovimientoUseCase';
-import { PrismaMovimientoRepository } from '../../infrastructure/repositories/PrismaMovimientoRepository';
+import { ListarMovimientosUseCase } from '../../application/usecases/ListarMovimientosUseCase.js';
+import { CrearMovimientoUseCase } from '../../application/usecases/CrearMovimientoUseCase.js';
+import { PrismaMovimientoRepository } from '../../infrastructure/repositories/PrismaMovimientoRepository.js';
 
 const repo = new PrismaMovimientoRepository();
 const listarUC = new ListarMovimientosUseCase(repo);

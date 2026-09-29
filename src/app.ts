@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import movimientoRoutes from './interface/routes/movimientoRoutes';
+import movimientoRoutes from './interface/routes/movimientoRoutes.js';
 
 dotenv.config();
 
