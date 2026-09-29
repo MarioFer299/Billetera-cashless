@@ -1,0 +1,40 @@
+{
+  "name": "festival-billetera",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API REST para el módulo Billetera Cashless - Festival Picnic 2026",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "nodemon --ext ts,json --exec \"tsx ./src/app.ts\"",
+    "sync": "npx prisma db pull && npx prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "^6.19.3",
+    "@prisma/client": "^6.19.3",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.4",
+    "@types/pg": "^8.23.1",
+    "nodemon": "^3.1.14",
+    "prisma": "^6.19.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarioFer299/Billetera-cashless.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MarioFer299/Billetera-cashless/issues"
+  },
+  "homepage": "https://github.com/MarioFer299/Billetera-cashless#readme"
+}
