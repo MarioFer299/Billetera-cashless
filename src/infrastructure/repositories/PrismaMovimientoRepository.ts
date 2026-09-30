@@ -1,66 +1,75 @@
-import { prisma } from '../db/prismaClient';
-import { IMovimientoRepository, Movimiento, PaginationResult } from '../../domain/repositories/IMovimientoRepository.js';
+import { prisma } from '../db/prismaClient.js';
+import { IMovimientoRepository } from '../../domain/repositories/IMovimientoRepository.js';
 
 export class PrismaMovimientoRepository implements IMovimientoRepository {
-  async findAll(page: number, limit: number): Promise<{ data: Movimiento[]; pagination: PaginationResult }> {
+  
+  // 1. Método findAll (ESTE ES EL QUE ESTABA FALLANDO)
+  async findAll(page: number, limit: number) {
     const skip = (page - 1) * limit;
-
+    
     const [data, total] = await Promise.all([
       prisma.movimientos.findMany({
-        where: { state: { not: 'REMOVED' } },
+        where: { state: 'ACTIVE' },
         skip,
         take: limit,
-        orderBy: { id: 'asc' },
+        orderBy: { created_at: 'desc' }
       }),
       prisma.movimientos.count({
-        where: { state: { not: 'REMOVED' } },
-      }),
+        where: { state: 'ACTIVE' }
+      })
     ]);
 
     return {
       data,
       pagination: {
-        total,
-        currentPage: page,
+        page,
         limit,
-        totalPages: Math.ceil(total / limit),
-      },
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
     };
   }
 
-  async findById(id: number): Promise<Movimiento | null> {
+  // 2. Método findById
+  async findById(id: number) {
     return prisma.movimientos.findFirst({
-      where: { id, state: { not: 'REMOVED' } },
+      where: { id, state: 'ACTIVE' }
     });
   }
 
-  async create(data: { asistente_id: number; tipo: string; monto: number; saldo: number }): Promise<Movimiento> {
+  // 3. Método create
+  async create(data: any) {
     return prisma.movimientos.create({
-      data: {
-        ...data,
-        state: 'ACTIVE',
-      },
+      data
     });
   }
 
-  async update(id: number, data: Partial<Movimiento>): Promise<Movimiento> {
-    return prisma.movimientos.update({
-      where: { id },
-      data,
+  // 4. Método asistenteExiste
+  async asistenteExiste(asistenteId: number): Promise<boolean> {
+    const asistente = await prisma.asistentes.findFirst({
+      where: { id: asistenteId }
     });
+    return asistente !== null;
   }
 
-  async softDelete(id: number): Promise<Movimiento> {
-    return prisma.movimientos.update({
-      where: { id },
-      data: { state: 'REMOVED' },
+  // 5. Método calcularSaldo
+  async calcularSaldo(asistenteId: number): Promise<number> {
+    const movimientos = await prisma.movimientos.findMany({
+      where: {
+        asistente_id: asistenteId,
+        state: 'ACTIVE'
+      }
     });
-  }
 
-  async findLastByAsistente(asistente_id: number): Promise<Movimiento | null> {
-    return prisma.movimientos.findFirst({
-      where: { asistente_id, state: { not: 'REMOVED' } },
-      orderBy: { id: 'desc' },
-    });
+    let saldo = 0;
+    for (const mov of movimientos) {
+      if (mov.tipo === 'RECARGA') {
+        saldo += mov.monto;
+      } else if (mov.tipo === 'CONSUMO') {
+        saldo -= mov.monto;
+      }
+    }
+
+    return saldo;
   }
 }

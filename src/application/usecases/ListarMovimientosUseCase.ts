@@ -1,10 +1,10 @@
-import { IMovimientoRepository } from '../../domain/repositories/IMovimientoRepository';
+import { IMovimientoRepository } from '../../domain/repositories/IMovimientoRepository.js';
 
 export class ListarMovimientosUseCase {
   constructor(private repo: IMovimientoRepository) {}
 
   async execute(page: number, limit: number) {
-    // Validaciones estrictas según CONVENCIONES.md
+    // Validaciones estrictas
     if (!Number.isInteger(page) || !Number.isInteger(limit)) {
       throw new Error('page y limit deben ser enteros');
     }

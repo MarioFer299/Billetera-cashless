@@ -147,6 +147,9 @@ model movimientos {
   created_at   DateTime   @default(now()) @db.Timestamptz(6)
   updated_at   DateTime   @default(now()) @db.Timestamptz(6)
   asistentes   asistentes @relation(fields: [asistente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([asistente_id, state, tipo, monto], map: "movimientos_wallet_balance_idx")
+  @@index([asistente_id, state, id], map: "movimientos_wallet_page_idx")
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
