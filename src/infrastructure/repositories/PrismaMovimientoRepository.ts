@@ -53,11 +53,11 @@ export class PrismaMovimientoRepository implements IMovimientoRepository {
   }
 
   async delete(id: number) {
-    // ✅ CORREGIDO: Se eliminó 'updated_at' y se fuerza 'Number(id)' para evitar errores de tipo en Prisma
     return prisma.movimientos.update({
       where: { id: Number(id) },
-      data: { 
-        state: 'INACTIVE' 
+      data: {
+        state: 'REMOVED',
+        updated_at: new Date(),
       },
     });
   }
