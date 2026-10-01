@@ -27,7 +27,7 @@ export class PrismaMovimientoRepository implements IMovimientoRepository {
     return {
       data,
       pagination: {
-        page,
+        currentPage: page, // ✅ El test espera 'currentPage', no 'page'
         limit,
         total,
         totalPages: Math.ceil(total / limit),
@@ -37,7 +37,7 @@ export class PrismaMovimientoRepository implements IMovimientoRepository {
 
   async findById(id: number) {
     return prisma.movimientos.findFirst({
-      where: { id, state: 'ACTIVE' },
+      where: { id: Number(id), state: 'ACTIVE' },
     });
   }
 
@@ -47,29 +47,34 @@ export class PrismaMovimientoRepository implements IMovimientoRepository {
 
   async updateDescripcion(id: number, descripcion: string | null) {
     return prisma.movimientos.update({
-      where: { id },
+      where: { id: Number(id) },
       data: { descripcion },
     });
   }
 
   async delete(id: number) {
+    // ✅ CORREGIDO: Se eliminó 'updated_at' y se fuerza 'Number(id)' para evitar errores de tipo en Prisma
     return prisma.movimientos.update({
-      where: { id },
-      data: { state: 'INACTIVE', updated_at: new Date() },
+      where: { id: Number(id) },
+      data: { 
+        state: 'INACTIVE' 
+      },
     });
   }
 
   async asistenteExiste(asistenteId: number): Promise<boolean> {
-    const asistente = await prisma.asistentes.findUnique({ where: { id: asistenteId } });
+    const asistente = await prisma.asistentes.findUnique({ 
+      where: { id: Number(asistenteId) } 
+    });
     return asistente !== null;
   }
 
   async calcularSaldo(asistenteId: number, excludedId?: number): Promise<number> {
     const movimientos = await prisma.movimientos.findMany({
       where: {
-        asistente_id: asistenteId,
+        asistente_id: Number(asistenteId),
         state: 'ACTIVE',
-        ...(excludedId !== undefined && { id: { not: excludedId } }),
+        ...(excludedId !== undefined && { id: { not: Number(excludedId) } }),
       }
     });
 
