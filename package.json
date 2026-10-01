@@ -8,7 +8,7 @@
     "dev": "nodemon --ext ts,json --exec \"tsx ./src/app.ts\"",
     "web": "next dev src/frontend -p 3001",
     "web:build": "next build src/frontend",
-    "sync": "npx prisma db pull && npx prisma generate"
+    "sync": "npx --no-install prisma db pull && npx --no-install prisma generate"
   },
   "keywords": [],
   "author": "",
