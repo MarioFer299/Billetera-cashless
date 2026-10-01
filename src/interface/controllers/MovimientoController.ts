@@ -20,7 +20,7 @@ const saldoUC = new ConsultarSaldoUseCase(repo);
 
 function responderError(res: Response, error: unknown) {
   const typedError = error as { message?: string; statusCode?: number };
-  return res.status(typedError.statusCode ?? 400).json({ error: typedError.message ?? 'Error interno' });
+  return res.status(typedError.statusCode ?? 500).json({ error: typedError.message ?? 'Error interno' });
 }
 
 export class MovimientoController {

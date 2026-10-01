@@ -8,6 +8,11 @@ export class ActualizarMovimientoUseCase {
     if (!Number.isInteger(id) || id < 1) {
       throw new ApplicationError('id debe ser un entero positivo', 400);
     }
+
+    if (!(await this.repo.findById(id))) {
+      throw new ApplicationError('Movimiento no encontrado', 404);
+    }
+
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
       throw new ApplicationError('El cuerpo debe ser un objeto', 400);
     }
@@ -23,10 +28,6 @@ export class ActualizarMovimientoUseCase {
     }
     if (typeof descripcion === 'string' && descripcion.length > 200) {
       throw new ApplicationError('descripcion no puede superar 200 caracteres', 400);
-    }
-
-    if (!(await this.repo.findById(id))) {
-      throw new ApplicationError('Movimiento no encontrado', 404);
     }
 
     return this.repo.updateDescripcion(id, descripcion ?? null);
