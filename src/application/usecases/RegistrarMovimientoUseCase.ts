@@ -1,63 +1,65 @@
 import { IMovimientoRepository } from '../../domain/repositories/IMovimientoRepository.js';
+import { ApplicationError } from '../errors/ApplicationError.js';
 
 export class RegistrarMovimientoUseCase {
   constructor(private repo: IMovimientoRepository) {}
 
-  async execute(data: { asistente_id: number; tipo: string; monto: number; descripcion?: string }) {
-    // 1. Validaciones de entrada
-    if (!data.asistente_id || !Number.isInteger(data.asistente_id) || data.asistente_id < 1) {
-      throw new Error('asistente_id debe ser un entero positivo');
+  async execute(data: { asistente_id?: unknown; tipo?: unknown; monto?: unknown; descripcion?: unknown }) {
+    const allowedFields = ['asistente_id', 'tipo', 'monto', 'descripcion'];
+    const extraFields = Object.keys(data).filter((field) => !allowedFields.includes(field));
+    if (extraFields.length > 0) {
+      throw new ApplicationError('El cuerpo contiene campos no permitidos', 400);
     }
 
-    if (!data.tipo || typeof data.tipo !== 'string') {
-      throw new Error('tipo es requerido y debe ser string');
+    if (!Number.isInteger(data.asistente_id) || (data.asistente_id as number) < 1) {
+      throw new ApplicationError('asistente_id debe ser un entero positivo', 400);
     }
 
-    const tipoUpper = data.tipo.toUpperCase();
+    if (typeof data.tipo !== 'string') {
+      throw new ApplicationError('tipo es requerido y debe ser string', 400);
+    }
+
+    const tipoUpper = data.tipo.toUpperCase() as 'RECARGA' | 'CONSUMO';
     if (!['RECARGA', 'CONSUMO'].includes(tipoUpper)) {
-      throw new Error('tipo debe ser RECARGA o CONSUMO');
+      throw new ApplicationError('tipo debe ser RECARGA o CONSUMO', 400);
     }
 
-    if (!data.monto || typeof data.monto !== 'number' || !Number.isInteger(data.monto)) {
-      throw new Error('monto debe ser un número entero');
+    if (!Number.isInteger(data.monto) || (data.monto as number) <= 0) {
+      throw new ApplicationError('monto debe ser un entero positivo', 400);
     }
 
-    if (data.monto <= 0) {
-      throw new Error('monto debe ser mayor a cero');
+    if (data.descripcion !== undefined && data.descripcion !== null && typeof data.descripcion !== 'string') {
+      throw new ApplicationError('descripcion debe ser texto', 400);
     }
 
-    // 2. Validar que el asistente existe
-    const asistenteExiste = await this.repo.asistenteExiste(data.asistente_id);
+    if (typeof data.descripcion === 'string' && data.descripcion.length > 200) {
+      throw new ApplicationError('descripcion no puede superar 200 caracteres', 400);
+    }
+
+    const asistenteId = data.asistente_id as number;
+    const monto = data.monto as number;
+    const asistenteExiste = await this.repo.asistenteExiste(asistenteId);
     if (!asistenteExiste) {
-      throw new Error('El asistente no existe');
+      throw new ApplicationError('El asistente no existe', 404);
     }
 
-    // 3. REGLA DE NEGOCIO: Saldo nunca en negativo
+    if (tipoUpper === 'RECARGA' && (monto < 10000 || monto > 2000000)) {
+      throw new ApplicationError('La RECARGA debe estar entre 10000 y 2000000', 400);
+    }
+
     if (tipoUpper === 'CONSUMO') {
-      const saldoActual = await this.repo.calcularSaldo(data.asistente_id);
-      
-      if (saldoActual < data.monto) {
-        throw new Error('Saldo insuficiente. Saldo actual: ' + saldoActual);
+      const saldoActual = await this.repo.calcularSaldo(asistenteId);
+
+      if (saldoActual < monto) {
+        throw new ApplicationError('Saldo insuficiente para realizar esta transacción', 409);
       }
     }
 
-    // 4. Registrar el movimiento
-    const nuevoMovimiento = await this.repo.create({
-      asistente_id: data.asistente_id,
+    return this.repo.create({
+      asistente_id: asistenteId,
       tipo: tipoUpper,
-      monto: data.monto,
-      descripcion: data.descripcion || null,
-      state: 'ACTIVE',
-      created_at: new Date(),
-      updated_at: new Date()
+      monto,
+      descripcion: (data.descripcion as string | null | undefined) ?? null,
     });
-
-    // 5. Calcular y devolver el nuevo saldo
-    const nuevoSaldo = await this.repo.calcularSaldo(data.asistente_id);
-
-    return {
-      ...nuevoMovimiento,
-      saldo: nuevoSaldo
-    };
   }
 }

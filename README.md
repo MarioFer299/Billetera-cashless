@@ -1,5 +1,60 @@
     # Módulo 10: Billetera Cashless - Festival Picnic 2026
 
+    API REST del módulo de billetera cashless para el Festival Picnic 2026. Permite registrar recargas y consumos, consultar movimientos y obtener el saldo de un asistente.
+
+    ## Instalación
+
+    ```powershell
+    npm install
+    Copy-Item .env.example .env
+    ```
+
+    Configura en `.env` la conexión PostgreSQL entregada por el docente:
+
+    ```env
+    DATABASE_URL="postgresql://USUARIO:CONTRASENA@HOST:5432/NOMBRE_BASE?schema=public"
+    PORT=3000
+    ```
+
+    La base de datos es compartida. Para sincronizar el esquema usa únicamente:
+
+    ```powershell
+    npm run sync
+    ```
+
+    No ejecutes `prisma migrate` ni `prisma db push`.
+
+    ## Ejecución
+
+    ```powershell
+    npm run dev
+    ```
+
+    La API queda disponible en `http://localhost:3000`.
+
+    ## Endpoints
+
+    - `GET /api/movimientos?page=1&limit=10&asistente_id=1&tipo=RECARGA`
+    - `GET /api/movimientos/:id`
+    - `POST /api/movimientos`
+    - `PATCH /api/movimientos/:id`
+    - `DELETE /api/movimientos/:id`
+    - `GET /api/billeteras/:asistenteId/saldo`
+
+    ## Regla de negocio: saldo nunca negativo
+
+    El saldo es la suma de las recargas activas menos la suma de los consumos activos. Un consumo que supere el saldo actual responde `409` y no se guarda. Además, anular una recarga se rechaza con `409` si dejaría el saldo por debajo de cero.
+
+    Estas reglas están en `src/application/usecases/RegistrarMovimientoUseCase.ts` y `src/application/usecases/EliminarMovimientoUseCase.ts`. El repositorio solo consulta y persiste datos; los controladores reciben la petición, delegan al caso de uso y responden.
+
+    ## Arquitectura
+
+    - `domain/`: interfaces de repositorio.
+    - `application/`: casos de uso y reglas de negocio.
+    - `infrastructure/`: Prisma y PostgreSQL.
+    - `interface/`: rutas y controladores HTTP.
+    # Módulo 10: Billetera Cashless - Festival Picnic 2026
+
 ## 👥 Integrantes y Roles
 - **Nombre 1** ([@usuario1](https://github.com/usuario1)): Casos de uso y reglas de negocio (Application).
 - **Nombre 2** ([@usuario2](https://github.com/usuario2)): Implementación de repositorios y conexión a BD (Infrastructure).

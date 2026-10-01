@@ -53,7 +53,6 @@ model asistentes {
   ventas_merch         ventas_merch[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model boletas {
   id           Int        @id @default(autoincrement())
   asistente_id Int
@@ -67,7 +66,6 @@ model boletas {
   dias         dias       @relation(fields: [dia_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model buses {
   id           Int            @id @default(autoincrement())
   ruta         String         @db.VarChar(100)
@@ -82,7 +80,6 @@ model buses {
   reservas_bus reservas_bus[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model dias {
   id                   Int                    @id @default(autoincrement())
   nombre               String                 @db.VarChar(40)
@@ -98,7 +95,6 @@ model dias {
   turnos               turnos[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model escenarios {
   id             Int              @id @default(autoincrement())
   nombre         String           @unique @db.VarChar(80)
@@ -107,7 +103,6 @@ model escenarios {
   shows          shows[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model incidentes {
   id           Int         @id @default(autoincrement())
   asistente_id Int?
@@ -124,7 +119,6 @@ model incidentes {
   zonas        zonas       @relation(fields: [zona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model inscripciones_meet {
   id           Int        @id @default(autoincrement())
   asistente_id Int
@@ -136,7 +130,6 @@ model inscripciones_meet {
   shows        shows      @relation(fields: [show_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model movimientos {
   id           Int        @id @default(autoincrement())
   asistente_id Int
@@ -152,7 +145,6 @@ model movimientos {
   @@index([asistente_id, state, id], map: "movimientos_wallet_page_idx")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model objetos_perdidos {
   id                         Int         @id @default(autoincrement())
   descripcion                String      @db.VarChar(300)
@@ -172,7 +164,6 @@ model objetos_perdidos {
   zonas                      zonas       @relation(fields: [zona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model pedidos_comida {
   id               Int              @id @default(autoincrement())
   asistente_id     Int
@@ -187,7 +178,6 @@ model pedidos_comida {
   productos_comida productos_comida @relation(fields: [producto_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model productos_comida {
   id             Int              @id @default(autoincrement())
   nombre         String           @db.VarChar(100)
@@ -201,7 +191,6 @@ model productos_comida {
   zonas          zonas            @relation(fields: [zona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model productos_merch {
   id           Int            @id @default(autoincrement())
   nombre       String         @db.VarChar(100)
@@ -215,7 +204,6 @@ model productos_merch {
   ventas_merch ventas_merch[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model resenas {
   id           Int        @id @default(autoincrement())
   asistente_id Int
@@ -229,7 +217,6 @@ model resenas {
   shows        shows      @relation(fields: [show_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model reservas_bus {
   id           Int        @id @default(autoincrement())
   asistente_id Int
@@ -241,7 +228,6 @@ model reservas_bus {
   buses        buses      @relation(fields: [bus_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model reservas_camping {
   id            Int        @id @default(autoincrement())
   asistente_id  Int
@@ -256,7 +242,6 @@ model reservas_camping {
   zonas         zonas      @relation(fields: [zona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model reservas_parqueadero {
   id            Int        @id @default(autoincrement())
   asistente_id  Int
@@ -272,7 +257,6 @@ model reservas_parqueadero {
   zonas         zonas      @relation(fields: [zona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model shows {
   id                 Int                  @id @default(autoincrement())
   artista_id         Int
@@ -290,7 +274,6 @@ model shows {
   escenarios         escenarios           @relation(fields: [escenario_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model turnos {
   id            Int         @id @default(autoincrement())
   voluntario_id Int
@@ -307,7 +290,6 @@ model turnos {
   zonas         zonas       @relation(fields: [zona_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model ventas_merch {
   id              Int             @id @default(autoincrement())
   asistente_id    Int
@@ -330,7 +312,6 @@ model voluntarios {
   turnos           turnos[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model zonas {
   id                   Int                    @id @default(autoincrement())
   nombre               String                 @unique @db.VarChar(80)

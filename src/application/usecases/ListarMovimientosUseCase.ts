@@ -1,10 +1,12 @@
-import { IMovimientoRepository } from '../../domain/repositories/IMovimientoRepository.js';
+import {
+  IMovimientoRepository,
+  MovimientoFilters,
+} from '../../domain/repositories/IMovimientoRepository.js';
 
 export class ListarMovimientosUseCase {
   constructor(private repo: IMovimientoRepository) {}
 
-  async execute(page: number, limit: number) {
-    // Validaciones estrictas
+  async execute(page: number, limit: number, filters: MovimientoFilters = {}) {
     if (!Number.isInteger(page) || !Number.isInteger(limit)) {
       throw new Error('page y limit deben ser enteros');
     }
@@ -15,6 +17,13 @@ export class ListarMovimientosUseCase {
       throw new Error('limit máximo es 50');
     }
 
-    return this.repo.findAll(page, limit);
+    if (filters.asistente_id !== undefined && (!Number.isInteger(filters.asistente_id) || filters.asistente_id < 1)) {
+      throw new Error('asistente_id debe ser un entero positivo');
+    }
+    if (filters.tipo !== undefined && !['RECARGA', 'CONSUMO'].includes(filters.tipo)) {
+      throw new Error('tipo debe ser RECARGA o CONSUMO');
+    }
+
+    return this.repo.findAll(page, limit, filters);
   }
 }
