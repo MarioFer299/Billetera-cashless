@@ -6,6 +6,7 @@ export default function MovimientoForm({ onSubmit }) {
   const [asis, setAsis] = useState('');
   const [tipo, setTipo] = useState('RECARGA');
   const [monto, setMonto] = useState('');
+  const [descripcion, setDescripcion] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,9 +16,11 @@ export default function MovimientoForm({ onSubmit }) {
       asistente_id: Number(asis),
       tipo,
       monto: Number(monto),
+      descripcion: descripcion || undefined,
     });
 
     setMonto('');
+    setDescripcion('');
   };
 
   return (
@@ -54,6 +57,16 @@ export default function MovimientoForm({ onSubmit }) {
           required
           value={monto}
           onChange={(e) => setMonto(e.target.value)}
+        />
+
+        <label htmlFor="descripcion">Descripción <span>(opcional)</span></label>
+        <input
+          id="descripcion"
+          type="text"
+          maxLength="200"
+          placeholder="Ej. Recarga en taquilla"
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
         />
 
         <button type="submit">Registrar</button>

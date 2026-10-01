@@ -23,7 +23,6 @@ export default function TablaMovimientos({
             <th>Asistente</th>
             <th>Tipo</th>
             <th className="num">Monto</th>
-            <th className="num">Saldo</th>
             <th>Fecha</th>
           </tr>
         </thead>
@@ -37,13 +36,12 @@ export default function TablaMovimientos({
                   <span className={`tag ${m.tipo}`}>{m.tipo}</span>
                 </td>
                 <td className="num">{moneyFormatter(m.monto)}</td>
-                <td className="num">{moneyFormatter(m.saldo)}</td>
                 <td>{dateFormatter(m.created_at)}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="6" className="empty">
+              <td colSpan="5" className="empty">
                 Sin movimientos
               </td>
             </tr>

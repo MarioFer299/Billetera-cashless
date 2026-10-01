@@ -11,7 +11,7 @@ export default function Header({ baseUrl, onSaveApi }) {
 
   return (
     <header>
-      <div class="wrap">
+      <div className="wrap">
         <h1>
           Billetera Cashless <span>· Festival Picnic 2026</span>
         </h1>

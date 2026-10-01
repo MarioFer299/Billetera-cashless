@@ -30,6 +30,8 @@ export default function Home() {
   const [movimientos, setMovimientos] = useState([]);
   const [pagination, setPagination] = useState({});
   const [detalle, setDetalle] = useState(null);
+  const [saldo, setSaldo] = useState(null);
+  const [saldoId, setSaldoId] = useState('1');
   const [searchId, setSearchId] = useState('');
   const [message, setMessage] = useState({ text: '', isError: false });
 
@@ -76,9 +78,25 @@ export default function Home() {
     }
   }, [apiFetch, page, limit]);
 
+  const loadSaldo = useCallback(async (id) => {
+    if (!id) return;
+    try {
+      const { data } = await apiFetch(`/api/billeteras/${id}/saldo`);
+      setSaldo(data);
+      setSaldoId(String(id));
+    } catch (e) {
+      setSaldo(null);
+      showMsg(e.message, true);
+    }
+  }, [apiFetch]);
+
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    loadSaldo(saldoId);
+  }, [loadSaldo, saldoId]);
 
   const handleSaveApi = (newUrl) => {
     const finalUrl = newUrl || 'http://localhost:3000';
@@ -96,9 +114,8 @@ export default function Home() {
         method: 'POST',
         body: JSON.stringify(nuevoMovimiento),
       });
-      showMsg(
-        `Movimiento #${data.id} registrado. Saldo actual del asistente: ${money(data.saldo)}`
-      );
+      showMsg(`Movimiento #${data.id} registrado correctamente.`);
+      await loadSaldo(nuevoMovimiento.asistente_id);
 
       setPage(1);
       const p = await loadData();
@@ -137,6 +154,28 @@ export default function Home() {
             {message.text}
           </div>
         )}
+
+        <section className="hero">
+          <div>
+            <p className="eyebrow">CONTROL DE BILLETERA</p>
+            <h2 className="hero-title">Movimientos claros. Saldo bajo control.</h2>
+            <p className="hero-copy">Registra recargas, valida consumos y consulta el estado de cada asistente.</p>
+          </div>
+          <div className="balance-card">
+            <div className="balance-heading">
+              <span>Saldo disponible</span>
+              <span className="status-dot">ACTIVO</span>
+            </div>
+            <strong>{saldo ? money(saldo.saldo) : '—'}</strong>
+            <form className="balance-form" onSubmit={(event) => { event.preventDefault(); loadSaldo(saldoId); }}>
+              <label htmlFor="saldo-id">Asistente</label>
+              <div className="row">
+                <input id="saldo-id" type="number" min="1" value={saldoId} onChange={(event) => setSaldoId(event.target.value)} />
+                <button type="submit">Consultar</button>
+              </div>
+            </form>
+          </div>
+        </section>
 
         <main>
           <aside>
